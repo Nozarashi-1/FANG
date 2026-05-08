@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FANG — LLM & AI Security Platform</title>
+  <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+<canvas id="neural-canvas"></canvas>
+
+<!-- ═══ NAV ══════════════════════════════════════════════════════════════ -->
+<nav class="nav">
+  <a class="nav-logo" onclick="showPage('home')">
+    <span class="nav-fang">FANG</span>
+    <span class="nav-badge" id="nav-badge">⬤ 0 PAYLOADS</span>
+  </a>
+  <div class="nav-links">
+    <a class="nav-link active" id="nav-home" onclick="showPage('home')">⚡ Home</a>
+    <a class="nav-link" id="nav-payloads" onclick="showPage('payloads')">◈ Payloads</a>
+
+    <!-- Tools dropdown -->
+    <div class="nav-group" id="navg-tools">
+      <button class="nav-group-btn" onclick="toggleNavGroup('tools')">⚙ Tools ▾</button>
+      <div class="nav-dropdown">
+        <div class="nav-dd-item" id="navdd-generator" onclick="showPage('generator');closeNavGroups()">✦ Generator</div>
+        <div class="nav-dd-item" id="navdd-mutator"   onclick="showPage('mutator');closeNavGroups()">🧬 Mutator</div>
+        <div class="nav-dd-item" id="navdd-analyzer"  onclick="showPage('analyzer');closeNavGroups()">🩺 Analyzer</div>
+        <div class="nav-dd-item" id="navdd-playground" onclick="showPage('playground');closeNavGroups()">▶ Playground</div>
+      </div>
+    </div>
+
+    <!-- Ops dropdown -->
+    <div class="nav-group" id="navg-ops">
+      <button class="nav-group-btn" onclick="toggleNavGroup('ops')">📁 Ops ▾</button>
+      <div class="nav-dropdown">
+        <div class="nav-dd-item" id="navdd-chains"  onclick="showPage('chains');closeNavGroups()">🔗 Attack Chains</div>
+        <div class="nav-dd-item" id="navdd-history" onclick="showPage('history');closeNavGroups()">🕐 Session History</div>
+        <div class="nav-dd-item" id="navdd-report"  onclick="showPage('report');closeNavGroups()">📝 Report Builder</div>
+      </div>
+    </div>
+  </div>
+  <div class="nav-right">
+    <div class="nav-search">
+      <span style="color:var(--fg2);font-size:13px">⌕</span>
+      <input type="text" id="global-search" placeholder="Search payloads..." onkeydown="globalSearch(event)">
+      <span class="kbd">⌘K</span>
+    </div>
+  </div>
+</nav>
+
+<!-- ═══ HOME ══════════════════════════════════════════════════════════════ -->
+<div class="page active" id="page-home">
+  <div class="hero">
+    <div class="hero-top-line"></div>
+    <div class="hero-content">
+      <div class="hero-left">
+        <div class="hero-version" id="hero-version">v3.0 — <span id="hero-count">0</span> payloads</div>
+        <div class="hero-fang">FANG</div>
+        <div class="hero-tagline"><span id="tw-text"></span><span class="tw-cursor">|</span></div>
+        <p class="hero-desc">The definitive LLM & AI red-team platform. OWASP LLM Top 10 payloads, multi-AI generation, mutation engine, response analysis, attack chains, and pentest reporting.</p>
+        <div class="hero-stats">
+          <div class="stat"><div class="stat-num count-up" id="stat-total" data-target="0">0</div><div class="stat-label">PAYLOADS</div></div>
+          <div class="stat"><div class="stat-num count-up" data-target="10">0</div><div class="stat-label">OWASP CATS</div></div>
+          <div class="stat"><div class="stat-num count-up" data-target="5">0</div><div class="stat-label">AI PROVIDERS</div></div>
+          <div class="stat"><div class="stat-num" style="color:var(--neon)">∞</div><div class="stat-label">CHAINS</div></div>
+        </div>
+        <div class="hero-ctas">
+          <button class="btn-primary" onclick="showPage('payloads')">◈ Explore Payloads →</button>
+          <button class="btn-secondary" onclick="showPage('generator')">✦ Generate</button>
+          <button class="btn-secondary" onclick="showPage('chains')">🔗 Chains</button>
+          <button class="btn-secondary" onclick="showPage('report')">📝 Report</button>
+        </div>
+      </div>
+      <div class="hero-terminal-wrap">
+        <div class="hero-terminal">
+          <div class="terminal-bar"><div class="t-dot r"></div><div class="t-dot y"></div><div class="t-dot g"></div><span class="terminal-title">fang@security:~</span></div>
+          <div class="terminal-body" id="terminal-body"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="threat-feed">
+    <div class="threat-feed-hdr"><span class="threat-feed-title">⚠ Live Threat Intelligence</span><span class="feed-live">LIVE FEED</span></div>
+    <div class="threat-grid" id="threat-grid"></div>
+  </div>
+  <div class="features">
+    <div class="features-title">CAPABILITIES</div>
+    <div class="features-grid">
+      <div class="feature-card" onclick="showPage('payloads')"><div class="feature-icon">◈</div><div class="feature-title">Payload Browser</div><div class="feature-desc">64+ curated OWASP LLM Top 10 payloads with MITRE ATLAS mapping, variable editing, and one-click copy.</div></div>
+      <div class="feature-card" onclick="showPage('generator')"><div class="feature-icon">✦</div><div class="feature-title">Multi-AI Generator</div><div class="feature-desc">Generate payloads via Anthropic, OpenAI, Groq, Ollama, or any custom OpenAI-compatible endpoint.</div></div>
+      <div class="feature-card" onclick="showPage('chains')"><div class="feature-icon">🔗</div><div class="feature-title">Attack Chain Builder</div><div class="feature-desc">Sequence multi-step attacks. Build, reorder, annotate chains. Export as playbook or JSON.</div></div>
+      <div class="feature-card" onclick="showPage('history')"><div class="feature-icon">🕐</div><div class="feature-title">Session History</div><div class="feature-desc">Full log of every playground request. Replay, analyze, and add findings to your evidence basket.</div></div>
+      <div class="feature-card" onclick="showPage('report')"><div class="feature-icon">📝</div><div class="feature-title">Report Builder</div><div class="feature-desc">Collect evidence from Analyzer & Playground. One-click export as a professional HTML pentest report.</div></div>
+      <div class="feature-card" onclick="showPage('mutator')"><div class="feature-icon">🧬</div><div class="feature-title">Payload Mutator</div><div class="feature-desc">Auto-generate Base64, Unicode, leetspeak, zero-width, ROT13, and HTML entity obfuscated variants.</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ PAYLOADS ═══════════════════════════════════════════════════════════ -->
+<div class="page" id="page-payloads">
+  <div class="std-page">
+    <div class="page-hdr">
+      <div><div class="page-title">Payload Browser</div><div class="page-sub" id="payload-subtitle">Loading...</div></div>
+      <div class="hdr-actions">
+        <button class="btn-secondary" style="font-size:12px;padding:7px 13px" onclick="luckyPayload()">🎲 Lucky</button>
+        <button class="btn-secondary" style="font-size:12px;padding:7px 13px" onclick="exportPayloads()">⬇ Export JSON</button>
+      </div>
+    </div>
+    <div class="search-wrap">
+      <span class="search-icon">⌕</span>
+      <input type="text" class="search-input" id="payload-search" placeholder="Search payloads, tags, categories, MITRE IDs..." oninput="filterPayloads()">
+    </div>
+    <div class="payloads-layout">
+      <div class="filters-col">
+        <div class="f-section"><div class="f-title">Sort By</div>
+          <select class="sort-sel" id="sort-select" onchange="filterPayloads()">
+            <option value="id">Payload ID</option><option value="severity">Severity</option><option value="category">Category</option>
+          </select></div>
+        <div class="f-section"><div class="f-title">Severity</div>
+          <div class="f-item active" onclick="setSev(this,'ALL')">All <span class="f-cnt" id="cnt-ALL">0</span></div>
+          <div class="f-item" onclick="setSev(this,'CRITICAL')">🔴 Critical <span class="f-cnt" id="cnt-CRITICAL">0</span></div>
+          <div class="f-item" onclick="setSev(this,'HIGH')">🟠 High <span class="f-cnt" id="cnt-HIGH">0</span></div>
+          <div class="f-item" onclick="setSev(this,'MEDIUM')">🔵 Medium <span class="f-cnt" id="cnt-MEDIUM">0</span></div>
+          <div class="f-item" onclick="setSev(this,'LOW')">🟢 Low <span class="f-cnt" id="cnt-LOW">0</span></div></div>
+        <div class="f-section"><div class="f-title">OWASP Category</div><div class="cat-pills" id="cat-pills"></div></div>
+      </div>
+      <div>
+        <div class="results-row"><span id="result-count">0</span> payloads — click to inspect &amp; edit variables</div>
+        <div class="payload-grid" id="payload-grid"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ GENERATOR ══════════════════════════════════════════════════════════ -->
+<div class="page" id="page-generator">
+  <div class="std-page">
+    <div class="page-hdr"><div><div class="page-title">Payload Generator</div><div class="page-sub">AI-powered generation — choose your provider</div></div></div>
+    <div class="gen-grid">
+      <div class="panel">
+        <div class="panel-hdr"><span class="dot"></span>CONFIGURATION</div>
+        <div class="panel-body">
+          <div class="f-group"><label class="f-label">AI Provider</label>
+            <div class="provider-grid" id="provider-grid">
+              <button class="provider-btn active" data-p="anthropic" onclick="selectProvider(this)"><span class="prov-name">Anthropic</span><span class="prov-sub">claude-opus-4-6</span></button>
+              <button class="provider-btn" data-p="openai" onclick="selectProvider(this)"><span class="prov-name">OpenAI</span><span class="prov-sub">gpt-4 / gpt-4o</span></button>
+              <button class="provider-btn" data-p="groq" onclick="selectProvider(this)"><span class="prov-name">Groq</span><span class="prov-sub">llama3-70b · fast</span></button>
+              <button class="provider-btn" data-p="ollama" onclick="selectProvider(this)"><span class="prov-name">Ollama</span><span class="prov-sub">localhost · free</span></button>
+            </div>
+          </div>
+          <div class="f-group"><label class="f-label">Model Override (optional)</label>
+            <input type="text" class="f-input" id="gen-model" placeholder="Leave blank for provider default..."></div>
+          <div class="f-group" id="custom-url-group" style="display:none">
+            <label class="f-label">Custom Endpoint URL</label>
+            <input type="text" class="f-input" id="gen-custom-url" placeholder="https://your-api.com/v1/chat/completions"></div>
+          <div class="f-group"><label class="f-label">OWASP Category</label>
+            <select class="f-select" id="gen-category">
+              <option>LLM01 — Prompt Injection</option><option>LLM02 — Insecure Output Handling</option>
+              <option>LLM03 — Training Data Poisoning</option><option>LLM04 — Model Denial of Service</option>
+              <option>LLM05 — Supply Chain Vulnerabilities</option><option>LLM06 — Sensitive Information Disclosure</option>
+              <option>LLM07 — Insecure Plugin Design</option><option>LLM08 — Excessive Agency</option>
+              <option>LLM09 — Overreliance</option><option>LLM10 — Model Theft</option>
+            </select></div>
+          <div class="f-group"><label class="f-label">Attack Surface</label>
+            <select class="f-select" id="gen-surface">
+              <option>General LLM API (OpenAI-compatible)</option><option>Customer Service Chatbot</option>
+              <option>RAG / Document Q&A System</option><option>Code Assistant / Copilot</option>
+              <option>Autonomous Agent with Tools</option><option>Multi-modal LLM</option>
+              <option>Fine-tuned Custom Model</option><option>LLM-powered Search Engine</option>
+            </select></div>
+          <div class="f-group"><label class="f-label">Additional Context</label>
+            <textarea class="f-textarea" id="gen-context" placeholder="e.g. GPT-4 with PII in system prompt, email plugin enabled..."></textarea></div>
+          <div class="f-group"><label class="f-label">Constraints to Test</label>
+            <div class="chk-grid" id="chk-grid">
+              <div class="chk-item" onclick="toggleChk(this)"><div class="chk-box"></div><span class="chk-lbl">No brackets &lt;&gt;</span></div>
+              <div class="chk-item" onclick="toggleChk(this)"><div class="chk-box"></div><span class="chk-lbl">No quotes ' "</span></div>
+              <div class="chk-item" onclick="toggleChk(this)"><div class="chk-box"></div><span class="chk-lbl">No javascript:</span></div>
+              <div class="chk-item" onclick="toggleChk(this)"><div class="chk-box"></div><span class="chk-lbl">No script tags</span></div>
+              <div class="chk-item" onclick="toggleChk(this)"><div class="chk-box"></div><span class="chk-lbl">Length limit</span></div>
+              <div class="chk-item" onclick="toggleChk(this)"><div class="chk-box"></div><span class="chk-lbl">WAF filtering</span></div>
+            </div></div>
+          <div class="f-group"><label class="f-label">Count: <span id="gen-count-val">5</span></label>
+            <div class="slider-wrap"><input type="range" class="range-slider" id="gen-count" min="1" max="15" value="5" oninput="document.getElementById('gen-count-val').textContent=this.value"><span class="slider-num" id="gen-count-disp">5</span></div></div>
+          <div class="f-group apikey-wrap"><label class="f-label">API Key</label>
+            <input type="password" class="f-input" id="gen-api-key" placeholder="sk-ant-... / sk-... / (empty for Ollama)">
+            <button class="eye-btn" onclick="toggleKey('gen-api-key')">👁</button></div>
+          <button class="gen-btn" id="gen-btn" onclick="generatePayloads()"><span>✦</span> Generate Payloads</button>
+        </div>
+      </div>
+      <div class="panel output-panel" id="gen-output">
+        <div class="panel-hdr"><span class="dot"></span>GENERATED PAYLOADS</div>
+        <div class="output-empty" id="gen-empty"><div class="big-icon">✦</div><p>Configure options and click Generate Payloads<br><br><span style="color:var(--fg2)">Supports Anthropic · OpenAI · Groq · Ollama · Custom</span></p></div>
+        <div class="gen-results" id="gen-results" style="display:none"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ MUTATOR ════════════════════════════════════════════════════════════ -->
+<div class="page" id="page-mutator">
+  <div class="std-page">
+    <div class="page-hdr"><div><div class="page-title">Payload Mutator</div><div class="page-sub">Generate obfuscated variants to bypass filters and WAFs</div></div></div>
+    <div class="mutator-layout">
+      <div class="panel">
+        <div class="panel-hdr"><span class="dot" style="background:var(--purple)"></span>INPUT</div>
+        <div class="panel-body">
+          <div class="f-group"><label class="f-label">Base Payload</label>
+            <textarea class="f-textarea" id="mut-input" style="min-height:120px" placeholder="Paste any payload to generate obfuscated variants..."></textarea></div>
+          <div class="f-group"><label class="f-label">Mutation Techniques</label>
+            <div style="display:flex;flex-direction:column;gap:5px" id="mut-techniques">
+              <div class="mut-technique active" data-tech="base64" onclick="toggleMutTech(this)"><div class="mut-dot"></div><span class="mut-lbl">Base64 encode</span></div>
+              <div class="mut-technique active" data-tech="unicode" onclick="toggleMutTech(this)"><div class="mut-dot"></div><span class="mut-lbl">Unicode escape sequences</span></div>
+              <div class="mut-technique active" data-tech="leet" onclick="toggleMutTech(this)"><div class="mut-dot"></div><span class="mut-lbl">Leetspeak substitution</span></div>
+              <div class="mut-technique active" data-tech="whitespace" onclick="toggleMutTech(this)"><div class="mut-dot"></div><span class="mut-lbl">Zero-width char injection</span></div>
+              <div class="mut-technique active" data-tech="rot13" onclick="toggleMutTech(this)"><div class="mut-dot"></div><span class="mut-lbl">ROT13 encoding</span></div>
+              <div class="mut-technique" data-tech="reverse" onclick="toggleMutTech(this)"><div class="mut-dot"></div><span class="mut-lbl">Reverse + decode hint</span></div>
+              <div class="mut-technique" data-tech="html" onclick="toggleMutTech(this)"><div class="mut-dot"></div><span class="mut-lbl">HTML entity encoding</span></div>
+            </div></div>
+          <button class="mut-btn" onclick="mutatePayload()">🧬 Generate Mutations</button>
+        </div>
+      </div>
+      <div class="panel" style="min-height:380px;display:flex;flex-direction:column">
+        <div class="panel-hdr"><span class="dot" style="background:var(--purple)"></span>MUTATED VARIANTS</div>
+        <div id="mut-empty" style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:9px;padding:50px;color:var(--fg2)">
+          <div style="font-size:30px;opacity:.3">🧬</div>
+          <p style="font-family:var(--mono);font-size:11px;text-align:center;line-height:1.8">Paste a payload and select techniques,<br>then click Generate Mutations</p>
+        </div>
+        <div class="mut-results" id="mut-results"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ ANALYZER ══════════════════════════════════════════════════════════ -->
+<div class="page" id="page-analyzer">
+  <div class="std-page">
+    <div class="page-hdr"><div><div class="page-title">Response Analyzer</div><div class="page-sub">Detect whether a payload succeeded, failed, or achieved partial bypass</div></div></div>
+    <div class="analyzer-layout">
+      <div class="panel">
+        <div class="panel-hdr"><span class="dot" style="background:var(--green)"></span>INPUT</div>
+        <div class="panel-body">
+          <div class="f-group"><label class="f-label">Original Payload Sent</label>
+            <textarea class="f-textarea" id="az-payload" style="min-height:90px" placeholder="The payload you sent to the model..."></textarea></div>
+          <div class="f-group"><label class="f-label">LLM Response Received</label>
+            <textarea class="f-textarea" id="az-response" style="min-height:130px" placeholder="Paste the full LLM response here..."></textarea></div>
+          <div class="f-group"><label class="f-label">Attack Category</label>
+            <select class="f-select" id="az-category">
+              <option>LLM01 — Prompt Injection</option><option>LLM02 — Insecure Output Handling</option>
+              <option>LLM06 — Sensitive Information Disclosure</option><option>LLM08 — Excessive Agency</option>
+              <option>LLM10 — Model Theft</option><option>General / Other</option>
+            </select></div>
+          <button class="analyze-btn" onclick="analyzeResponse()">🩺 Analyze Response</button>
+        </div>
+      </div>
+      <div class="panel" style="min-height:380px">
+        <div class="panel-hdr"><span class="dot" style="background:var(--green)"></span>ANALYSIS RESULT</div>
+        <div id="az-result-area" style="padding:16px">
+          <div id="az-empty" style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:9px;padding:50px 0;color:var(--fg2)">
+            <div style="font-size:30px;opacity:.3">🩺</div>
+            <p style="font-family:var(--mono);font-size:11px;text-align:center;line-height:1.8">Enter payload and response,<br>then click Analyze Response</p>
+          </div>
+          <div id="az-verdict" style="display:none"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ PLAYGROUND ═════════════════════════════════════════════════════════ -->
+<div class="page" id="page-playground">
+  <div class="std-page">
+    <div class="page-hdr"><div><div class="page-title">Playground</div><div class="page-sub">Fire payloads at live LLM endpoints — authorized use only</div></div></div>
+    <div class="pg-quick" id="pg-quick"><span style="font-family:var(--mono);font-size:9px;color:var(--fg2);letter-spacing:2px">QUICK LOAD:</span></div>
+    <div class="pg-grid">
+      <div class="pg-panel">
+        <div class="pg-hdr"><div class="pg-hdr-title"><div class="status-dot" style="background:var(--amber)"></div>REQUEST</div><button class="raw-btn" onclick="clearPlayground()">Clear</button></div>
+        <div class="pg-body">
+          <div style="display:flex;flex-direction:column;gap:7px">
+            <div class="cfg-row"><span class="cfg-lbl">TARGET</span><input type="text" class="cfg-in" id="pg-target" placeholder="https://api.openai.com/v1/chat/completions"></div>
+            <div class="cfg-row"><span class="cfg-lbl">API KEY</span><input type="password" class="cfg-in" id="pg-apikey" placeholder="sk-..."></div>
+            <div class="cfg-row"><span class="cfg-lbl">MODEL</span><input type="text" class="cfg-in" id="pg-model" value="gpt-3.5-turbo"></div>
+          </div>
+          <div style="display:flex;align-items:center;justify-content:space-between">
+            <label style="font-family:var(--mono);font-size:9px;color:var(--fg2);letter-spacing:2px">PAYLOAD</label>
+            <span style="font-family:var(--mono);font-size:9px;color:var(--fg2)" id="char-count">0 chars</span>
+          </div>
+          <textarea class="pg-editor" id="pg-payload" placeholder="Paste or type your test payload here..." oninput="updateCharCount()"></textarea>
+          <button class="send-btn" id="send-btn" onclick="sendPlayground()">▶ Send Payload</button>
+        </div>
+      </div>
+      <div class="pg-panel">
+        <div class="pg-hdr"><div class="pg-hdr-title"><div class="status-dot" id="resp-dot" style="background:var(--fg2)"></div>RESPONSE</div>
+          <div style="display:flex;gap:5px">
+            <button class="raw-btn" id="raw-toggle-btn" onclick="toggleRaw()" style="display:none">Raw JSON</button>
+            <button class="raw-btn" id="add-evidence-btn" onclick="addCurrentToEvidence()" style="display:none">📝 Add to Report</button>
+            <button class="raw-btn" id="send-to-az-btn" onclick="sendToAnalyzer()" style="display:none">🩺 Analyze</button>
+          </div>
+        </div>
+        <div class="pg-body resp-area">
+          <div class="meta-row" id="resp-meta" style="display:none"></div>
+          <div class="resp-placeholder" id="resp-placeholder"><div style="font-size:20px;opacity:.25;margin-bottom:7px">▶</div>Configure target and send a payload</div>
+          <div class="resp-content" id="resp-content" style="display:none"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ ATTACK CHAINS ══════════════════════════════════════════════════════ -->
+<div class="page" id="page-chains">
+  <div class="std-page">
+    <div class="page-hdr">
+      <div><div class="page-title">Attack Chain Builder</div><div class="page-sub">Sequence multi-step attacks — build, annotate, export</div></div>
+      <div class="hdr-actions">
+        <button class="btn-secondary" style="font-size:12px;padding:7px 13px" onclick="clearChain()">🗑 Clear Chain</button>
+        <button class="btn-secondary" style="font-size:12px;padding:7px 13px" onclick="exportChainJSON()">⬇ Export JSON</button>
+        <button class="btn-primary" style="font-size:12px;padding:7px 16px" onclick="exportChainPlaybook()">📄 Export Playbook</button>
+      </div>
+    </div>
+    <div class="chains-layout">
+      <!-- Library -->
+      <div class="chain-lib panel">
+        <div class="panel-hdr"><span class="dot"></span>PAYLOAD LIBRARY</div>
+        <div style="padding:10px">
+          <input type="text" class="f-input" id="chain-search" placeholder="Search payloads..." oninput="filterChainLib()" style="margin-bottom:0">
+          <div class="chain-lib-list" id="chain-lib-list"></div>
+        </div>
+      </div>
+      <!-- Canvas -->
+      <div>
+        <div class="chain-canvas" id="chain-canvas">
+          <div class="chain-empty" id="chain-empty">
+            <div style="font-size:36px;opacity:.25;margin-bottom:10px">🔗</div>
+            <p>Click payloads from the library to add steps<br><br>Build a multi-step attack sequence, annotate each step<br>with expected outcomes, then export as a playbook</p>
+          </div>
+          <div class="chain-steps" id="chain-steps" style="display:none"></div>
+        </div>
+        <button class="chain-add-btn" onclick="addCustomStep()">+ Add Custom Step</button>
+      </div>
+      <!-- Meta -->
+      <div class="chain-meta">
+        <div class="panel">
+          <div class="panel-hdr"><span class="dot"></span>CHAIN METADATA</div>
+          <div class="panel-body">
+            <div class="f-group"><label class="f-label">Chain Name</label><input type="text" class="f-input" id="chain-name" placeholder="e.g. RAG Exfiltration Chain"></div>
+            <div class="f-group"><label class="f-label">Target System</label><input type="text" class="f-input" id="chain-target" placeholder="e.g. GPT-4 RAG app"></div>
+            <div class="f-group"><label class="f-label">Objective</label><textarea class="f-textarea" id="chain-objective" style="min-height:60px" placeholder="What does this chain aim to achieve?"></textarea></div>
+            <div style="font-family:var(--mono);font-size:10px;color:var(--fg2);padding:8px 0">
+              Steps: <span style="color:var(--neon)" id="chain-step-count">0</span> &nbsp;·&nbsp;
+              Severity: <span style="color:var(--amber)" id="chain-max-sev">—</span>
+            </div>
+          </div>
+        </div>
+        <button class="chain-export-btn" onclick="exportChainPlaybook()">📄 Export Playbook</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ SESSION HISTORY ════════════════════════════════════════════════════ -->
+<div class="page" id="page-history">
+  <div class="std-page">
+    <div class="page-hdr">
+      <div><div class="page-title">Session History</div><div class="page-sub" id="history-sub">0 requests recorded</div></div>
+      <div class="hdr-actions">
+        <button class="btn-secondary" style="font-size:12px;padding:7px 13px" onclick="clearHistory()">🗑 Clear All</button>
+        <button class="btn-secondary" style="font-size:12px;padding:7px 13px" onclick="exportHistoryJSON()">⬇ Export JSON</button>
+      </div>
+    </div>
+    <div class="history-filters">
+      <input type="text" class="f-input" id="hist-search" placeholder="Filter by payload or target..." oninput="renderHistory()" style="width:260px">
+      <select class="sort-sel" id="hist-filter-status" onchange="renderHistory()" style="width:120px">
+        <option value="">All Status</option><option value="ok">Success</option><option value="err">Error</option>
+      </select>
+      <span style="font-family:var(--mono);font-size:10px;color:var(--fg2)" id="hist-count-label"></span>
+    </div>
+    <div class="history-table-wrap">
+      <table class="history-table">
+        <thead><tr>
+          <th>Time</th><th>Target</th><th>Model</th><th>Payload</th><th>Status</th><th>ms</th><th>Actions</th>
+        </tr></thead>
+        <tbody id="history-tbody"></tbody>
+      </table>
+      <div class="hist-empty" id="hist-empty">No requests recorded yet. Start testing in the Playground.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ REPORT BUILDER ══════════════════════════════════════════════════════ -->
+<div class="page" id="page-report">
+  <div class="std-page">
+    <div class="page-hdr">
+      <div><div class="page-title">Report Builder</div><div class="page-sub">Collect evidence and export a professional HTML pentest report</div></div>
+      <div class="hdr-actions">
+        <button class="btn-secondary" style="font-size:12px;padding:7px 13px" onclick="clearEvidence()">🗑 Clear Evidence</button>
+        <button class="btn-primary" style="font-size:12px;padding:7px 16px" id="export-report-btn" onclick="exportReport()">📄 Generate Report</button>
+      </div>
+    </div>
+    <div class="report-layout">
+      <!-- Engagement config -->
+      <div class="panel">
+        <div class="panel-hdr"><span class="dot" style="background:var(--red)"></span>ENGAGEMENT DETAILS</div>
+        <div class="panel-body">
+          <div class="f-group"><label class="f-label">Engagement Name</label><input type="text" class="f-input" id="rpt-name" placeholder="e.g. ACME AI Assistant Pentest"></div>
+          <div class="f-group"><label class="f-label">Tester / Author</label><input type="text" class="f-input" id="rpt-tester" placeholder="Your name"></div>
+          <div class="f-group"><label class="f-label">Target System</label><input type="text" class="f-input" id="rpt-target" placeholder="e.g. https://api.acme.com"></div>
+          <div class="f-group"><label class="f-label">Date</label><input type="date" class="f-input" id="rpt-date"></div>
+          <div class="f-group"><label class="f-label">Scope</label><input type="text" class="f-input" id="rpt-scope" placeholder="e.g. LLM API endpoints, chatbot UI"></div>
+          <div class="f-group"><label class="f-label">Executive Summary</label><textarea class="f-textarea" id="rpt-summary" style="min-height:100px" placeholder="Brief summary of the assessment scope, methodology, and key findings..."></textarea></div>
+          <div style="margin-top:4px;padding:12px;background:var(--bg2);border:1px solid var(--border);border-radius:5px">
+            <div style="font-family:var(--mono);font-size:9px;color:var(--fg2);letter-spacing:2px;margin-bottom:8px">EVIDENCE SUMMARY</div>
+            <div id="rpt-summary-counts" style="font-family:var(--mono);font-size:11px;color:var(--fg1)">No evidence collected yet.</div>
+          </div>
+        </div>
+      </div>
+      <!-- Evidence list -->
+      <div>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+          <span style="font-family:var(--mono);font-size:9px;color:var(--fg2);letter-spacing:3px">EVIDENCE BASKET (<span id="evidence-count">0</span> items)</span>
+          <button class="raw-btn" onclick="addBlankEvidence()">+ Add Manual Finding</button>
+        </div>
+        <div class="evidence-list" id="evidence-list">
+          <div class="evidence-empty" id="evidence-empty">No evidence collected yet.<br><br>Add findings via:<br>• Playground → "📝 Add to Report"<br>• Analyzer → "📝 Add to Report"<br>• "Add Manual Finding" above</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ DETAIL MODAL ═══════════════════════════════════════════════════════ -->
+<div class="overlay" id="detail-overlay" onclick="closeDetail(event)">
+  <div class="modal" id="detail-modal">
+    <div class="modal-hdr"><span class="modal-id" id="modal-id">—</span><button class="close-btn" onclick="closeDetailForce()">✕ CLOSE</button></div>
+    <div class="modal-body" id="modal-body"></div>
+  </div>
+</div>
+
+<!-- History expand modal -->
+<div class="overlay" id="hist-overlay" onclick="document.getElementById('hist-overlay').classList.remove('open')">
+  <div class="modal" id="hist-modal" style="max-width:720px">
+    <div class="modal-hdr"><span class="modal-id" id="hist-modal-id">Request Detail</span><button class="close-btn" onclick="document.getElementById('hist-overlay').classList.remove('open')">✕</button></div>
+    <div class="modal-body" id="hist-modal-body"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+<script src="/static/js/app.js"></script>
+</body>
+</html>
