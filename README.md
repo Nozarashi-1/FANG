@@ -1,6 +1,4 @@
-<div align="center">
 
-<img src="assets/fang-banner.png" alt="FANG Banner" width="100%"/>
 
 # FANG — LLM & AI Security Testing Platform
 
