@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="https://chatgpt.com/s/m_69fdab1c412081918487aca30739bccb" alt="FANG" width="100%"/>
+<img src="assets/fang-banner.png" alt="FANG Banner" width="100%"/>
 
 # FANG — LLM & AI Security Testing Platform
 
